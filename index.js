@@ -31,7 +31,8 @@ var FloatingLabel  = createReactClass({
   getInitialState () {
     var state = {
       text: this.props.value,
-      dirty: (this.props.value || this.props.placeholder)
+      dirty: (this.props.value || this.props.placeholder),
+      focused: false,
     };
 
     var style = state.dirty ? dirtyStyle : cleanStyle
@@ -84,6 +85,8 @@ var FloatingLabel  = createReactClass({
     if (this.props.onBlur) {
       this.props.onBlur(arguments);
     }
+
+    this.setState({ focused: false });
   },
 
   onChangeText(text) {
@@ -111,6 +114,13 @@ var FloatingLabel  = createReactClass({
         {this.props.children}
       </Animated.Text>
     )
+  },
+
+  focus() {
+    if (this.InputComponent && this.InputComponent.focus) {
+      this.setState({ focused: true });
+      this.InputComponent.focus();
+    }
   },
 
   render() {
@@ -158,13 +168,27 @@ var FloatingLabel  = createReactClass({
       elementStyles.push(this.props.style);
     }
 
+    const { focused } = this.state;
+
     return (
   		<View style={elementStyles}>
         {this._renderLabel()}
         <TextInput
-          {...props}
-        >
-        </TextInput>
+          {...props} ref={o => (this.InputComponent = o)} />
+        {!focused && (
+          <TouchableWithoutFeedback onPress={this.focus}>
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 3,
+              }}
+            />
+          </TouchableWithoutFeedback>
+        )}
       </View>
     );
   },
