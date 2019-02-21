@@ -12,7 +12,8 @@ import {
   Text,
   View,
   Platform,
-  ViewPropTypes
+  ViewPropTypes,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 var textPropTypes = Text.propTypes || ViewPropTypes
